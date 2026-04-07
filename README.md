@@ -117,3 +117,20 @@ Below you can find source code for existing app plugins and other related docume
 - [Basic panel plugin example](https://github.com/grafana/grafana-plugin-examples/tree/master/examples/panel-basic#readme)
 - [`plugin.json` documentation](https://grafana.com/developers/plugin-tools/reference/plugin-json)
 - [How to sign a plugin?](https://grafana.com/developers/plugin-tools/publish-a-plugin/sign-a-plugin)
+
+## Release
+
+Build the distributable plugin:
+
+```bash
+npm run build
+```
+
+For local development, signing is not required because the scaffolded Docker environment runs Grafana in development mode.
+
+For a public catalog release, submit the plugin for Grafana review first. After approval, sign releases with:
+
+```bash
+export GRAFANA_ACCESS_POLICY_TOKEN=your-token
+npx @grafana/sign-plugin@latest
+```
