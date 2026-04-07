@@ -1,0 +1,25 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "Hopara Panel",
+  "id": "hopara-grafana-panel",
+  "info": {
+    "keywords": ["hopara", "grafana", "iframe", "panel"],
+    "description": "Embed a Hopara visualization in Grafana and optionally override Hopara datasets with Grafana query results",
+    "author": {
+      "name": "Hopara"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}
