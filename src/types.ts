@@ -26,3 +26,14 @@ export const DEFAULT_OPTIONS: HoparaPanelOptions = {
   allowInference: true,
   debug: false,
 };
+
+export interface HoparaVisualization {
+  id: string;
+  name: string;
+}
+
+export interface HoparaDatasetQuery {
+  dataSource: string;
+  name: string;
+  value: string;
+}
