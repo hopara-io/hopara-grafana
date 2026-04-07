@@ -1,5 +1,7 @@
 import { PanelPlugin } from '@grafana/data';
 import { HoparaPanel } from './components/HoparaPanel';
+import { QueryMappingsEditor } from './components/editors/QueryMappingsEditor';
+import { VisualizationSelectEditor } from './components/editors/VisualizationSelectEditor';
 import { migrationHandler } from './migrations';
 import { DEFAULT_OPTIONS, HoparaPanelOptions } from './types';
 
@@ -25,11 +27,19 @@ export const plugin = new PanelPlugin<HoparaPanelOptions>(HoparaPanel)
         category: ['Connection'],
         defaultValue: DEFAULT_OPTIONS.datasetUrl,
       })
-      .addTextInput({
+      .addCustomEditor({
+        id: 'visualizationId',
         path: 'visualizationId',
-        name: 'Visualization ID',
+        name: 'Visualization',
         category: ['Visualization'],
-        defaultValue: DEFAULT_OPTIONS.visualizationId,
+        editor: VisualizationSelectEditor,
+      })
+      .addCustomEditor({
+        id: 'mappings',
+        path: 'mappings',
+        name: 'Query mappings',
+        category: ['Mappings'],
+        editor: QueryMappingsEditor,
       })
       .addBooleanSwitch({
         path: 'allowInference',

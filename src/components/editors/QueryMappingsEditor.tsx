@@ -1,0 +1,89 @@
+import React, { useEffect, useMemo, useState } from 'react';
+import { StandardEditorProps } from '@grafana/data';
+import { Alert, InlineField, Select, Stack } from '@grafana/ui';
+import { buildEditorState } from './buildEditorState';
+import { fetchDatasetQueries } from '../../services/hoparaApi';
+import { buildNextMappings } from '../../services/mappingInference';
+import { listQueryIdentities } from '../../services/queryIdentity';
+import { HoparaPanelOptions, QueryMapping } from '../../types';
+
+export const QueryMappingsEditor = ({
+  value,
+  onChange,
+  context,
+}: StandardEditorProps<QueryMapping[]>) => {
+  const options = (context?.options ?? {}) as HoparaPanelOptions;
+  const series = context?.data ?? [];
+  const [queries, setQueries] = useState<Array<{ label: string; value: string }>>([]);
+  const [error, setError] = useState('');
+
+  const identities = useMemo(() => listQueryIdentities(series), [series]);
+  const currentMappings = value ?? [];
+
+  useEffect(() => {
+    if (!options.datasetUrl) {
+      setQueries([]);
+      setError('');
+      return;
+    }
+
+    setError('');
+
+    fetchDatasetQueries(options.datasetUrl).then((result) => {
+      setQueries(result.map((query) => ({ label: `${query.dataSource} > ${query.name}`, value: query.value })));
+
+      if (options.allowInference) {
+        const nextMappings = buildNextMappings(identities, result, currentMappings);
+
+        if (JSON.stringify(nextMappings) !== JSON.stringify(currentMappings)) {
+          onChange(nextMappings);
+        }
+      }
+    }).catch((reason: Error) => setError(reason.message));
+  }, [currentMappings, identities, onChange, options.allowInference, options.datasetUrl]);
+
+  const rows = buildEditorState(
+    identities,
+    queries.map((query) => {
+      const [dataSource, name] = query.value.split(':');
+      return { dataSource, name, value: query.value };
+    }),
+    currentMappings
+  );
+
+  return (
+    <Stack direction="column" gap={1}>
+      {error && <Alert title="Dataset discovery failed" severity="error">{error}</Alert>}
+      {rows.map((row) => (
+        <InlineField key={row.queryKey} label={`${row.refId} / ${row.label}`}>
+          <Select
+            options={queries}
+            value={queries.find((query) => query.value === row.selectedValue) ?? null}
+            onChange={(item) => {
+              const fallbackMappings = buildNextMappings(
+                identities,
+                queries.map((query) => {
+                  const [dataSource, name] = query.value.split(':');
+                  return { dataSource, name, value: query.value };
+                }),
+                currentMappings
+              );
+
+              onChange(
+                fallbackMappings.map((mapping) =>
+                  mapping.queryKey === row.queryKey
+                    ? {
+                        ...mapping,
+                        hoparaQueryValue: item?.value ?? '',
+                        mappingMode: 'manual',
+                      }
+                    : mapping
+                )
+              );
+            }}
+          />
+        </InlineField>
+      ))}
+    </Stack>
+  );
+};
