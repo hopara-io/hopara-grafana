@@ -2,17 +2,21 @@ import { migrationHandler } from './migrations';
 
 describe('migrationHandler', () => {
   it('adds safe defaults for saved panels that only contain URLs', () => {
-    const panel = {
+    const migrated = migrationHandler({
+      id: 1,
+      type: 'hopara-grafana-panel',
       options: {
         embeddedUrl: 'http://localhost:3000',
         visualizationUrl: 'http://localhost:3001/visualizations',
         datasetUrl: 'http://localhost:3002/datasets',
       },
-    } as any;
+      fieldConfig: {
+        defaults: {},
+        overrides: [],
+      },
+    } as any);
 
-    const migrated = migrationHandler(panel);
-
-    expect(migrated.options).toEqual({
+    expect(migrated).toEqual({
       embeddedUrl: 'http://localhost:3000',
       visualizationUrl: 'http://localhost:3001/visualizations',
       datasetUrl: 'http://localhost:3002/datasets',
@@ -24,15 +28,20 @@ describe('migrationHandler', () => {
   });
 
   it('splits a legacy apiUrl into visualizationUrl and datasetUrl', () => {
-    const panel = {
+    const migrated = migrationHandler({
+      id: 1,
+      type: 'hopara-grafana-panel',
       options: {
         apiUrl: 'http://localhost:8080/api',
       },
-    } as any;
+      fieldConfig: {
+        defaults: {},
+        overrides: [],
+      },
+    } as any);
 
-    const migrated = migrationHandler(panel);
-
-    expect(migrated.options.visualizationUrl).toBe('http://localhost:8080/api');
-    expect(migrated.options.datasetUrl).toBe('http://localhost:8080/api');
+    expect(migrated.visualizationUrl).toBe('http://localhost:8080/api');
+    expect(migrated.datasetUrl).toBe('http://localhost:8080/api');
+    expect(migrated).not.toHaveProperty('apiUrl');
   });
 });
