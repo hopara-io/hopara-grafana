@@ -40,13 +40,14 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
   });
 
   useEffect(() => {
-    if (missingConfig || !hostRef.current || clientRef.current) {
+    const hostEl = hostRef.current;
+    if (missingConfig || !hostEl || clientRef.current) {
       return;
     }
 
     clientRef.current = createHoparaClient({
       embeddedUrl: resolvedOptions.embeddedUrl,
-      targetElement: hostRef.current,
+      targetElement: hostEl,
       debug: resolvedOptions.debug,
       accessToken: resolvedOptions.accessToken,
       tenant: resolvedOptions.tenant,
@@ -55,8 +56,8 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
     return () => {
       clientRef.current = null;
 
-      if (hostRef.current) {
-        hostRef.current.replaceChildren();
+      if (hostEl) {
+        hostEl.replaceChildren();
       }
     };
   }, [missingConfig, resolvedOptions.debug, resolvedOptions.embeddedUrl, resolvedOptions.accessToken, resolvedOptions.tenant]);

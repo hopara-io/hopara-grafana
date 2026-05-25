@@ -13,24 +13,29 @@ export const QueryMappingsEditor = ({
   context,
 }: StandardEditorProps<QueryMapping[]>) => {
   const options = (context?.options ?? {}) as HoparaPanelOptions;
-  const series = context?.data ?? [];
+  const series = context?.data;
   const [queries, setQueries] = useState<Array<{ label: string; value: string }>>([]);
   const [error, setError] = useState('');
 
-  const identities = useMemo(() => listQueryIdentities(series), [series]);
+  const identities = useMemo(() => listQueryIdentities(series ?? []), [series]);
   const currentMappings = value ?? [];
 
   // Keep latest values in refs so the effect can read them without being re-triggered
   const onChangeRef = useRef(onChange);
   const currentMappingsRef = useRef(currentMappings);
   const identitiesRef = useRef(identities);
-  onChangeRef.current = onChange;
-  currentMappingsRef.current = currentMappings;
-  identitiesRef.current = identities;
+
+  useEffect(() => {
+    onChangeRef.current = onChange;
+    currentMappingsRef.current = currentMappings;
+    identitiesRef.current = identities;
+  });
 
   useEffect(() => {
     const url = options.datasetUrl || 'https://dataset.hopara.app/view';
-    setError('');
+    Promise.resolve().then(() => {
+      setError('');
+    });
 
     fetchDatasetQueries(url, options.accessToken).then((result) => {
       setQueries(result.map((query) => ({ label: `${query.dataSource} > ${query.name}`, value: query.value })));

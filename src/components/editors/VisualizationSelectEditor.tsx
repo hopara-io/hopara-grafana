@@ -16,8 +16,11 @@ export const VisualizationSelectEditor = ({
 
   useEffect(() => {
     const url = options.visualizationUrl || 'https://visualization.hopara.app/visualization';
-    setLoading(true);
-    setError('');
+    
+    Promise.resolve().then(() => {
+      setLoading(true);
+      setError('');
+    });
 
     fetchVisualizations(url, options.accessToken)
       .then((result) =>
