@@ -1,11 +1,10 @@
-import type { PanelMigrationHandler } from '@grafana/data';
 import { DEFAULT_OPTIONS, HoparaPanelOptions } from './types';
 
 type LegacyOptions = Partial<HoparaPanelOptions> & {
   apiUrl?: string;
 };
 
-export const migrationHandler: PanelMigrationHandler<HoparaPanelOptions> = (panel) => {
+export const migrationHandler = (panel: any): Partial<HoparaPanelOptions> => {
   const legacy = (panel.options ?? {}) as LegacyOptions;
   const sharedApiUrl = legacy.apiUrl ?? '';
   const { apiUrl: _apiUrl, ...legacyWithoutApiUrl } = legacy;

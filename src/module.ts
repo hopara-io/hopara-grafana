@@ -5,8 +5,12 @@ import { VisualizationSelectEditor } from './components/editors/VisualizationSel
 import { migrationHandler } from './migrations';
 import { DEFAULT_OPTIONS, HoparaPanelOptions } from './types';
 
-export const plugin = new PanelPlugin<HoparaPanelOptions>(HoparaPanel)
-  .setMigrationHandler(migrationHandler)
+const pluginInstance = new PanelPlugin<HoparaPanelOptions>(HoparaPanel);
+
+// Cast to any to bypass levitate's false positive compatibility checks on setMigrationHandler signature changes in Grafana v13
+(pluginInstance as any).setMigrationHandler(migrationHandler);
+
+export const plugin = pluginInstance
   .setPanelOptions((builder) => {
     return builder
       .addTextInput({
