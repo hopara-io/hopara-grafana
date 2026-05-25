@@ -11,7 +11,9 @@
     "lint:fix": "npm run lint -- --fix && prettier --write --list-different .",
     "e2e": "playwright test",
     "server": "docker compose up --build",
-    "sign": "npx --yes @grafana/sign-plugin@latest"
+    "sign": "npx --yes @grafana/sign-plugin@latest",
+    "verify": "npm run test:ci && npm run build",
+    "pre-commit": "npm run lint && npm run typecheck && npm run test:ci && npm run build"
   },
   "author": "Hopara",
   "license": "Apache-2.0",
