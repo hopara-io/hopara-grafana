@@ -12,6 +12,7 @@ export interface HoparaPanelOptions {
   visualizationUrl: string;
   datasetUrl: string;
   accessToken: string;
+  tenant: string;
   visualizationId: string;
   mappings: QueryMapping[];
   allowInference: boolean;
@@ -23,6 +24,7 @@ export const DEFAULT_OPTIONS: HoparaPanelOptions = {
   visualizationUrl: 'https://visualization.hopara.app/visualization',
   datasetUrl: 'https://dataset.hopara.app/view',
   accessToken: '',
+  tenant: 'hopara.io',
   visualizationId: '',
   mappings: [],
   allowInference: true,

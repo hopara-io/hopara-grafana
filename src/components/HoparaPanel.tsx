@@ -16,6 +16,8 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
     () => ({
       ...options,
       embeddedUrl: replaceVariables(options.embeddedUrl),
+      accessToken: replaceVariables(options.accessToken),
+      tenant: replaceVariables(options.tenant),
       visualizationId: replaceVariables(options.visualizationId),
     }),
     [options, replaceVariables]
@@ -28,9 +30,8 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
   );
 
   const missingConfig =
-    !resolvedOptions.embeddedUrl ||
-    !resolvedOptions.visualizationUrl ||
-    !resolvedOptions.datasetUrl ||
+    !resolvedOptions.accessToken ||
+    !resolvedOptions.tenant ||
     !resolvedOptions.visualizationId;
 
   const unmapped = queryIdentities.filter((identity) => {
@@ -47,6 +48,8 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
       embeddedUrl: resolvedOptions.embeddedUrl,
       targetElement: hostRef.current,
       debug: resolvedOptions.debug,
+      accessToken: resolvedOptions.accessToken,
+      tenant: resolvedOptions.tenant,
     });
 
     return () => {
@@ -56,7 +59,7 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
         hostRef.current.replaceChildren();
       }
     };
-  }, [missingConfig, resolvedOptions.debug, resolvedOptions.embeddedUrl]);
+  }, [missingConfig, resolvedOptions.debug, resolvedOptions.embeddedUrl, resolvedOptions.accessToken, resolvedOptions.tenant]);
 
   useEffect(() => {
     if (missingConfig || !clientRef.current) {
@@ -77,7 +80,11 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
         return {
           source,
           query,
-          loader: async () => frameToLoaderData(frame),
+          name: query,
+          loader: async () => {
+            const res = frameToLoaderData(frame);
+            return res.rows;
+          },
           cache: false,
         };
       })
@@ -85,10 +92,13 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
 
     clientRef.current.update({
       visualizationId: resolvedOptions.visualizationId,
+      accessToken: resolvedOptions.accessToken,
+      tenant: resolvedOptions.tenant,
       dataLoaders: dataLoaders as Array<{
         source: string;
         query: string;
-        loader: () => Promise<{ columns: Array<{ name: string; type: string }>; rows: Array<Record<string, unknown>> }>;
+        name?: string;
+        loader: () => Promise<Array<Record<string, unknown>>>;
         cache: boolean;
       }>,
     });
@@ -99,12 +109,14 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
     missingConfig,
     queryIdentities,
     resolvedOptions.visualizationId,
+    resolvedOptions.accessToken,
+    resolvedOptions.tenant,
   ]);
 
   if (missingConfig) {
     return (
       <Alert title="Configure Hopara Panel" severity="info">
-        Set embeddedUrl, visualizationUrl, datasetUrl, and visualization in the panel options.
+        Set Access Token, Tenant, and Visualization in the panel options.
       </Alert>
     );
   }

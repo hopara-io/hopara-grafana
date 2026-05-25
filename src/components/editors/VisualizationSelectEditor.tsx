@@ -15,16 +15,11 @@ export const VisualizationSelectEditor = ({
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!options.visualizationUrl) {
-      setItems([]);
-      setError('');
-      return;
-    }
-
+    const url = options.visualizationUrl || 'https://visualization.hopara.app/visualization';
     setLoading(true);
     setError('');
 
-    fetchVisualizations(options.visualizationUrl, options.accessToken)
+    fetchVisualizations(url, options.accessToken)
       .then((result) =>
         setItems(result.map((item) => ({ label: item.name, value: item.id })))
       )

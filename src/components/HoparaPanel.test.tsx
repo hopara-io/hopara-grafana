@@ -27,6 +27,8 @@ const options: HoparaPanelOptions = {
   embeddedUrl: 'http://localhost:3000',
   visualizationUrl: 'http://localhost:3001/visualizations',
   datasetUrl: 'http://localhost:3002/datasets',
+  accessToken: 'mock-token',
+  tenant: 'hopara.io',
   visualizationId: 'viz-1',
   mappings: [
     {
@@ -61,7 +63,7 @@ const props = {
 
 describe('HoparaPanel', () => {
   it('renders a configuration message when required fields are missing', () => {
-    render(<HoparaPanel {...props} options={{ ...options, embeddedUrl: '' }} />);
+    render(<HoparaPanel {...props} options={{ ...options, accessToken: '' }} />);
 
     expect(screen.getByText(/Configure Hopara Panel/)).toBeInTheDocument();
   });

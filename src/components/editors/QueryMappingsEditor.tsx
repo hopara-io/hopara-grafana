@@ -29,15 +29,10 @@ export const QueryMappingsEditor = ({
   identitiesRef.current = identities;
 
   useEffect(() => {
-    if (!options.datasetUrl) {
-      setQueries([]);
-      setError('');
-      return;
-    }
-
+    const url = options.datasetUrl || 'https://dataset.hopara.app/view';
     setError('');
 
-    fetchDatasetQueries(options.datasetUrl, options.accessToken).then((result) => {
+    fetchDatasetQueries(url, options.accessToken).then((result) => {
       setQueries(result.map((query) => ({ label: `${query.dataSource} > ${query.name}`, value: query.value })));
 
       if (options.allowInference) {
@@ -63,7 +58,7 @@ export const QueryMappingsEditor = ({
     <Stack direction="column" gap={1}>
       {error && <Alert title="Dataset discovery failed" severity="error">{error}</Alert>}
       {rows.map((row) => (
-        <InlineField key={row.queryKey} label={`${row.refId} / ${row.label}`}>
+        <InlineField key={row.queryKey} label={row.refId}>
           <Select
             options={queries}
             value={queries.find((query) => query.value === row.selectedValue) ?? null}

@@ -22,6 +22,8 @@ describe('migrationHandler', () => {
       embeddedUrl: 'http://localhost:3000',
       visualizationUrl: 'http://localhost:3001/visualizations',
       datasetUrl: 'http://localhost:3002/datasets',
+      accessToken: '',
+      tenant: 'hopara.io',
       visualizationId: '',
       mappings: [],
       allowInference: true,

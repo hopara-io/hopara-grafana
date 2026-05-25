@@ -3,21 +3,23 @@ declare module '@hopara/iframe' {
     embeddedUrl: string;
     targetElement: HTMLElement;
     debug?: boolean;
+    accessToken?: string;
+    tenant?: string;
   }
 
   interface HoparaDataLoader {
     source: string;
     query: string;
-    loader: () => Promise<{
-      columns: Array<{ name: string; type: string }>;
-      rows: Array<Record<string, unknown>>;
-    }>;
+    name?: string;
+    loader: () => Promise<Array<Record<string, unknown>>>;
     cache?: boolean;
   }
 
   interface HoparaUpdateParams {
     visualizationId: string;
     dataLoaders: HoparaDataLoader[];
+    accessToken?: string;
+    tenant?: string;
   }
 
   interface HoparaInstance {

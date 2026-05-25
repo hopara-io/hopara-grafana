@@ -10,6 +10,7 @@ describe('frameToRows', () => {
       fields: [
         { name: 'city', type: FieldType.string, values: ['Sao Paulo', 'Recife'] },
         { name: 'count', type: FieldType.number, values: [10, 20] },
+        { name: 'price', type: FieldType.number, values: [10.5, 20.9] },
         { name: 'active', type: FieldType.boolean, values: [true, false] },
       ],
     });
@@ -17,14 +18,39 @@ describe('frameToRows', () => {
     expect(frameToLoaderData(frame)).toEqual({
       columns: [
         { name: 'city', type: 'STRING' },
-        { name: 'count', type: 'DECIMAL' },
+        { name: 'count', type: 'INTEGER' },
+        { name: 'price', type: 'DECIMAL' },
         { name: 'active', type: 'BOOLEAN' },
       ],
       rows: [
-        { city: 'Sao Paulo', count: 10, active: true },
-        { city: 'Recife', count: 20, active: false },
+        { city: 'Sao Paulo', count: 10, price: 10.5, active: true },
+        { city: 'Recife', count: 20, price: 20.9, active: false },
       ],
     });
+  });
+
+  it('reconstructs nested objects from dotted path field names', () => {
+    const frame = toDataFrame({
+      refId: 'A',
+      name: 'Assets',
+      fields: [
+        { name: 'asset_id', type: FieldType.string, values: ['123'] },
+        { name: 'metrics.temperature', type: FieldType.number, values: [23.5] },
+        { name: 'sensor_ids.life_signal', type: FieldType.string, values: ['abc'] },
+      ],
+    });
+
+    expect(frameToLoaderData(frame).rows).toEqual([
+      {
+        asset_id: '123',
+        metrics: {
+          temperature: 23.5,
+        },
+        sensor_ids: {
+          life_signal: 'abc',
+        },
+      },
+    ]);
   });
 
   it('creates stable query identities when multiple frames share the same refId', () => {

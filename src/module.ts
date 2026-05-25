@@ -37,6 +37,12 @@ export const plugin = new PanelPlugin<HoparaPanelOptions>(HoparaPanel)
           type: 'password',
         },
       })
+      .addTextInput({
+        path: 'tenant',
+        name: 'Tenant',
+        category: ['Connection'],
+        defaultValue: DEFAULT_OPTIONS.tenant,
+      })
       .addCustomEditor({
         id: 'visualizationId',
         path: 'visualizationId',
