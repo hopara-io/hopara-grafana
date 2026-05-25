@@ -27,6 +27,16 @@ export const plugin = new PanelPlugin<HoparaPanelOptions>(HoparaPanel)
         category: ['Connection'],
         defaultValue: DEFAULT_OPTIONS.datasetUrl,
       })
+      .addTextInput({
+        path: 'accessToken',
+        name: 'Access Token',
+        category: ['Connection'],
+        defaultValue: DEFAULT_OPTIONS.accessToken,
+        settings: {
+          placeholder: 'Bearer token',
+          type: 'password',
+        },
+      })
       .addCustomEditor({
         id: 'visualizationId',
         path: 'visualizationId',

@@ -24,13 +24,13 @@ export const VisualizationSelectEditor = ({
     setLoading(true);
     setError('');
 
-    fetchVisualizations(options.visualizationUrl)
+    fetchVisualizations(options.visualizationUrl, options.accessToken)
       .then((result) =>
         setItems(result.map((item) => ({ label: item.name, value: item.id })))
       )
       .catch((reason: Error) => setError(reason.message))
       .finally(() => setLoading(false));
-  }, [options.visualizationUrl]);
+  }, [options.visualizationUrl, options.accessToken]);
 
   if (loading) {
     return <Spinner />;

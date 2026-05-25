@@ -42,7 +42,7 @@ const options: HoparaPanelOptions = {
 
 const props = {
   id: 1,
-  data: { series: [frame], state: 'Done' },
+  data: { series: [frame], state: 'Done', timeRange: {} as any },
   options,
   timeRange: {} as any,
   timeZone: 'browser',
@@ -56,6 +56,7 @@ const props = {
   title: 'Hopara',
   onOptionsChange: jest.fn(),
   onChangeTimeRange: jest.fn(),
+  onFieldConfigChange: jest.fn(),
 } as PanelProps<HoparaPanelOptions>;
 
 describe('HoparaPanel', () => {

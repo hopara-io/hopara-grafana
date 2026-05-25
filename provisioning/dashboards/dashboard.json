@@ -35,9 +35,13 @@
       },
       "id": 1,
       "options": {
-        "seriesCountSize": "sm",
-        "showSeriesCount": false,
-        "text": "Default value of text input option"
+        "embeddedUrl": "http://localhost:3000",
+        "visualizationUrl": "http://localhost:3001/visualizations",
+        "datasetUrl": "http://localhost:3002/datasets",
+        "visualizationId": "viz-1",
+        "mappings": [],
+        "allowInference": true,
+        "debug": false
       },
       "targets": [
         {
@@ -65,11 +69,7 @@
         "y": 0
       },
       "id": 2,
-      "options": {
-        "seriesCountSize": "sm",
-        "showSeriesCount": false,
-        "text": "Default value of text input option"
-      },
+      "options": {},
       "targets": [
         {
           "alias": "",

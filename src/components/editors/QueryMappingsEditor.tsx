@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StandardEditorProps } from '@grafana/data';
 import { Alert, InlineField, Select, Stack } from '@grafana/ui';
 import { buildEditorState } from './buildEditorState';
@@ -20,6 +20,14 @@ export const QueryMappingsEditor = ({
   const identities = useMemo(() => listQueryIdentities(series), [series]);
   const currentMappings = value ?? [];
 
+  // Keep latest values in refs so the effect can read them without being re-triggered
+  const onChangeRef = useRef(onChange);
+  const currentMappingsRef = useRef(currentMappings);
+  const identitiesRef = useRef(identities);
+  onChangeRef.current = onChange;
+  currentMappingsRef.current = currentMappings;
+  identitiesRef.current = identities;
+
   useEffect(() => {
     if (!options.datasetUrl) {
       setQueries([]);
@@ -29,18 +37,18 @@ export const QueryMappingsEditor = ({
 
     setError('');
 
-    fetchDatasetQueries(options.datasetUrl).then((result) => {
+    fetchDatasetQueries(options.datasetUrl, options.accessToken).then((result) => {
       setQueries(result.map((query) => ({ label: `${query.dataSource} > ${query.name}`, value: query.value })));
 
       if (options.allowInference) {
-        const nextMappings = buildNextMappings(identities, result, currentMappings);
+        const nextMappings = buildNextMappings(identitiesRef.current, result, currentMappingsRef.current);
 
-        if (JSON.stringify(nextMappings) !== JSON.stringify(currentMappings)) {
-          onChange(nextMappings);
+        if (JSON.stringify(nextMappings) !== JSON.stringify(currentMappingsRef.current)) {
+          onChangeRef.current(nextMappings);
         }
       }
     }).catch((reason: Error) => setError(reason.message));
-  }, [currentMappings, identities, onChange, options.allowInference, options.datasetUrl]);
+  }, [options.datasetUrl, options.allowInference, options.accessToken]);
 
   const rows = buildEditorState(
     identities,

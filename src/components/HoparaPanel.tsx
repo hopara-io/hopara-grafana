@@ -23,7 +23,7 @@ export const HoparaPanel: React.FC<Props> = ({ data, options, replaceVariables }
 
   const queryIdentities = useMemo(() => listQueryIdentities(data.series), [data.series]);
   const mappingByKey = useMemo(
-    () => new Map(options.mappings.map((mapping) => [mapping.queryKey, mapping])),
+    () => new Map((options.mappings ?? []).map((mapping) => [mapping.queryKey, mapping])),
     [options.mappings]
   );
 
